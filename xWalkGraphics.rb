@@ -8,28 +8,26 @@ require_relative 'logParser'
 class XWalkDisplay < Gosu::Window
 	def initialize(sim=nil)
 		@log = LogParser.new('simLog.dat')
-		@simWidth = 10
-		@simHeight = 1
-		@winWidth = 1000.0
-		@winHeight = 500.0
+		@simWidth = 330*7
+		@simHeight = 100
+		@winWidth = 1024
+		@winHeight = 128
 		@sim = sim
 		@roadColor = Gosu::Color.argb(0x66666666)
-		super(1000,500,false)
+		super(@winWidth,@winHeight,false)
 		@i = 0
 		@pedImage = Gosu::Image.new(self,'man.bmp')
 		@carImage = Gosu::Image.new(self,'car.bmp')
 		@lightRed = Gosu::Image.new(self,'red.bmp')
 		@lightYellow = Gosu::Image.new(self,'yellow.bmp')
 		@lightGreen = Gosu::Image.new(self,'green.bmp')
-
-		#@pedImage = Gosu::Image.new(self,'man.bmp')
 	end
 	def update
 		@i += 1
 	end
-	def needs_redraw?
-		return @i < 3
-	end
+#	def needs_redraw?
+#		return @i < 3
+#	end
 	def draw
 		#@tempCol = Gosu::Color.argb(0xff00ff00)
 		#draw_quad(0,0,@tempCol ,100,0,@tempCol ,0,100,@tempCol ,100,100,@tempCol )
