@@ -1,21 +1,22 @@
 require "./LRandom.rb"
 require "./Welford.rb"
 require "./distributions.rb"
-
+require "./Ped.rb"
+require "./Event.rb"
 
 $BLOCKWIDTH = 330
 $PEDSTARTX = $BLOCKWIDTH*4 
 $PEDSTARTY = 0
 $XWALKLOC = $BLOCKWIDTH*3.5
 $XWALKLENGTH = 46
-$TOTALWALK = $BLOCKWIDTH/2 + @XWALKLENGH
-$TOTALWALK = 
+$TOTALWALK = 330/2 + 46
 $PEDSPEED = 0
 $PEDARRIVE = 1
+$PUSHBUTTON = 2
 
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWill,:signal,:logFile
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile, :time
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
     @pedWaiting = []
@@ -26,8 +27,8 @@ class Engine
     @carWil = Welford.new(20)
     @carArrive = Lambda.new(carArriveF)
     @pedArrive = Lambda.new(pedArriveF)
-    @pedSpeed = CustDistr.new(pedSpeedF)
-    @carSpeed = CustDistr.new(carSpeedF)
+    @pedSpeed = CustDist.new(pedSpeedF)
+    @carSpeed = CustDist.new(carSpeedF)
     @time = 0
     @finalTime = endTime
     @eventsList = Array.new
@@ -44,15 +45,15 @@ class Engine
 
   def tryPushButton
     if @pedWaiting.length == 0 then
-      if @rand.uniform(0,1,engine.pedPush) < 2.0/3.0 then
+      if @rand.uniform(0,1,$PUSHBUTTON) < 2.0/3.0 then
         pushButton()
       end
     else
-      if @rand.uniform(0,1,engine.pedPush) < 1.0/@pedWaiting.length then
+      if @rand.uniform(0,1,$PUSHBUTTON) < 1.0/@pedWaiting.length then
         pushButton()
       end
     end
-    @addEvent(ButtonPush.new(),engine.time + 60)
+    addEvent(ButtonPush.new(),@time + 60)
   end
   
   def pushButton
@@ -77,7 +78,7 @@ class Engine
 
   def addEvent(newEvent,time)
     newEvent.time = time
-    if(newEvent.class == PedSpawn or newEvent.class == CarSpawn) then
+    if(newEvent.class == PedSpawn or newEvent.class == LogEvent)# or newEvent.class == CarSpawn) then
       if time > @finalTime
         return
       end
@@ -97,9 +98,12 @@ class Engine
   def allowWalk()
     ped = @pedWaiting.shift
     while ped != nil do
-      add( PedDone.new(ped),@time + $WALKLENGH/ped.speed)
+      addEvent( PedDone.new(ped),@time + $XWALKLENGTH / ped.speed)
       ped = @pedWaiting.shift
     end
+  end
+  def allowDrive()
+    return
   end
 
   def apply(event)
@@ -124,23 +128,23 @@ class Light
   def pushButton(engine)
     if @state == "GREEN" then
       if (engine.time - @lastTransition) < 14 then
-        engine.add(GoYellow.new(),@lastTransition + 14)
+        engine.addEvent(GoYellow.new(),@lastTransition + 14)
       else
-        engine.add(GoYellow.new(),engine.time + 1)
+        engine.addEvent(GoYellow.new(),engine.time + 1)
       end
     end
   end
 
   def goYellow(engine)
     @state = "YELLOW"
-    engine.add(GoRed.new(),engine.time + 8)
+    engine.addEvent(GoRed.new(),engine.time + 8)
     engine.dumpButtonPush()
   end
 
   def goRed(engine)
     @state = "RED"
     @endWalk = engine.time + 12
-    engine.add(GoGreen.new(),engine.time + 12)
+    engine.addEvent(GoGreen.new(),engine.time + 12)
     engine.allowWalk()
     engine.dumpButtonPush()
   end
@@ -158,14 +162,16 @@ end
 
 class Runner
   def initialize(time,seed, pedarrival, autoarrival, pedrate, autorate, trace)
-    @engine = SimEngine.new(time,seed, pedarrival, autoarrival, pedrate, autorate, trace))
-    @engine.add(CarSpawn.new(),0)
-    #@engine.add(PedSpawn.new(),0)
+    @engine = Engine.new(time,seed, pedarrival, autoarrival, pedrate, autorate, trace)
+    #@engine.addEvent(CarSpawn.new(),0)
+    @engine.addEvent(PedSpawn.new(@engine.pedSpeed.getVal(@engine.rand,$PEDSPEED)),0)
+    @engine.addEvent(LogEvent.new(),0)
   end
   def run
     while @engine.moreEvents do
       @engine.apply(@engine.nextEvent)
     end
+=begin
     puts "Num peds"
     puts "OUTPUT #{@engine.numPed}"
     puts "Num cars"
@@ -181,7 +187,7 @@ class Runner
     puts "OUTPUT #{(@engine.pedWil.var/@engine.pedWil.i)/60}"
     puts "maximum wait ped"
     puts "OUTPUT #{@engine.pedWil.max/60}"
-=begin
+
     puts "min wait car"
     puts "OUTPUT #{@engine.carWil.min/60}"
     puts "average wait car"

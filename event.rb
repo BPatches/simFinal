@@ -1,4 +1,4 @@
-
+require "./Ped.rb"
 class Event
   attr_accessor :time
   
@@ -14,7 +14,7 @@ class Event
   end
 end
 
-class PedSpawn
+class PedSpawn < Event
   def initialize(speed)
     @speed = speed
   end
@@ -24,22 +24,22 @@ class PedSpawn
     engine.addAgent(thisPed)
     engine.addEvent(
                     PedSpawn.new(engine.pedSpeed.getVal(engine.rand,$PEDSPEED)),
-                    engine.pedArrive.nextArrival(engine.time, engine.rand, $PEDARRIVE)
+                    engine.pedArrive.nextArrival(engine.time/60, engine.rand, $PEDARRIVE)*60
                     )
-    engine.addEvent(PedArrive.new(thisPed))
+    engine.addEvent(PedArrive.new(thisPed),$BLOCKWIDTH / (2* @speed))
   end
 end
 
 
-class PedArrive
+class PedArrive < Event
   def initialize(ped)
     @thisPed = ped
   end
   def apply(engine)
     @thisPed.x = $XWALKLOC
     @thisPed.movingDown(engine.time)
-    if engine.isWalk and engine.walkEnd - $XWALKLENGH/@thisPed.speed > 0 then
-      engine.addEvent(PedDone.new(@thisPed),engine.time + $XWALKLENGH/@thisPed.speed)
+    if engine.isWalk and engine.walkEnd - $XWALKLENGTH/@thisPed.speed > 0 then
+      engine.addEvent(PedDone.new(@thisPed),engine.time + $XWALKLENGTH/@thisPed.speed)
     else
       engine.tryPushButton()
       engine.addWaitingPed(@thisPed)
@@ -47,10 +47,12 @@ class PedArrive
   end
 end
 
-class PedDone
-  def initalize(ped)
+class PedDone < Event
+
+  def initialize(ped)
     @thisPed = ped
   end
+
   def apply(engine)
     engine.removeAgent(@thisPed)
     engine.pedWil.newData(engine.time-@thisPed.minEnd)
@@ -85,16 +87,17 @@ end
 
 class LogEvent < Event
   def apply(engine) 
+    engine.addEvent(LogEvent.new(),engine.time + 1)
     carLog = []
     pedLog = []
     for agent in engine.agents
-      if agent.class == Car
-        carLog.push(agent.getPos(engine.time))
-      else 
+#      if agent.class == Car
+#        carLog.push(agent.getPos(engine.time))
+#      else 
         pedLog.push(agent.getPos(engine.time))
-      end
+#      end
     end
-    File.open(engine.logFile,a) do |log|
+    File.open(engine.logFile,"a") do |log|
       log.syswrite('{')
       for pos in carLog
         log.syswrite('(')

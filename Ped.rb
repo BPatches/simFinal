@@ -1,4 +1,4 @@
-require "./sim.rb"
+#require "./sim.rb"
 
 class Ped
   attr_reader :speed, :minEnd
