@@ -31,7 +31,7 @@ class Lambda
   def nextArrival(time,rand,stream)
     s = time
     begin
-      s = s +  randGen.exponential(1.0/@max)
+      s = s + rand.exponential(1.0/@max)
       u = rand.uniform(0,@max,stream)
     end while u > @lambda[s]
     return s
@@ -81,3 +81,7 @@ test = RangedHash.new(grades)
 #puts l.max
 #randGen = LRandom.new
 #cd = CustDist.new('carRates.dat')
+#time = 0
+#15.times{
+#	puts time = l.nextArrival(time,randGen,0)
+#}
