@@ -14,7 +14,9 @@ class Event
   end
 end
 
-
+class PedArrive
+  def initialize(speed)
+    @ped = 
 
 
 
