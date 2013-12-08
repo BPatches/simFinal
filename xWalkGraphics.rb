@@ -31,9 +31,9 @@ class XWalkDisplay < Gosu::Window
 	end
 	def update
 		@i += @timeWarp
-		if button_down?(char_to_button_id('+'))
+		if button_down?(char_to_button_id('>'))
 			@timeWarp += 1
-		elsif button_down?(char_to_button_id('-')) && @timeWarp > 1
+		elsif button_down?(char_to_button_id('<')) && @timeWarp > 1
 			@timeWarp -= 1
 		end
 	end
