@@ -39,7 +39,26 @@ class Lambda
   end
   
 end
+class CustDist
+def initialize(file)
+    dist = {}
+    sum = 0
+    distF = File.new(file)
+    distF.each{ |line|
+      vals = line.split
+      for i in (0..1)
+        vals[i] = vals[i].to_i
+      end
+      dist[(sum...sum+vals[1])] = vals[0]
+      sum+= vals[1]
+    }
+    @dist = RangedHash.new(dist)
+  end
+  def getVal(rand,stream)
+  	return @dist[rand.equalikely(0,100,stream)]
+  end
 
+end
 class RangedHash
   def initialize(hash)
     @hash = hash
@@ -59,6 +78,7 @@ test = RangedHash.new(grades)
 	puts "#{i} #{test[i]}"
 }
 =end
-l = Lambda.new('ArrivalRate.dat')
+#l = Lambda.new('ArrivalRate.dat')
 #puts l.max
-randGen = LRandom.new
+#randGen = LRandom.new
+#cd = CustDist.new('carRates.dat')
