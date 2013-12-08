@@ -5,10 +5,11 @@ require "./distributions.rb"
 $PEDSTARTX = 100
 $PEDSTARTY = 50
 $XWALKLOC = 50
+$BLOCKWIDTH = 300
 
 class Engine
   attr_reader :agents
-  def initialize(seed,endTime,pedArriveF,carArriveF,pedSpeed,carSpeed)
+  def initialize(seed,endTime,pedArriveF,carArriveF,pedSpeedF,carSpeedF)
     @pedWaiting = []
     @agents = []
     @signal = Light.new()
@@ -17,14 +18,11 @@ class Engine
     @carWil = Welford.new(20)
     @carArrive = Lambda.new(carArriveF)
     @pedArrive = Lambda.new(pedArriveF)
-    @pedSpeed = CustDistr.new(pedSpeed)
-    @carSpeed = CustDistr.new(carSpeed)
+    @pedSpeed = CustDistr.new(pedSpeedF)
+    @carSpeed = CustDistr.new(carSpeedF)
     @time = 0
     @finalTime = endTime
     @eventsList = Array.new
-    @numPed = 0
-    @numCar = 0
-    @blockWidth = 330
   end
   
   def pushButton
