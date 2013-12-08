@@ -14,16 +14,74 @@ class Event
   end
 end
 
-class PedArrive
+class PedSpawn
   def initialize(speed)
-    @ped = 
+    @speed = speed
+  end
+
+  def apply(engine)
+    thisPed = Ped.new(@speed,engine.time)
+    engine.addAgent(thisPed)
+    engine.addEvent(
+                    PedSpawn.new(engine.pedSpeed.getVal(engine.rand,$PEDSPEED)),
+                    engine.pedArrive.nextArrival(engine.time, engine.rand, $PEDARRIVE)
+                    )
+    engine.addEvent(PedArrive.new(thisPed))
+  end
+end
+
+
+class PedArrive
+  def initialize(ped)
+    @thisPed = ped
+  end
+  def apply(engine)
+    @thisPed.x = $XWALKLOC
+    @thisPed.movingDown(engine.time)
+    if engine.isWalk and engine.walkEnd - $XWALKLENGH/@thisPed.speed > 0 then
+      engine.addEvent(PedDone.new(@thisPed),engine.time + $XWALKLENGH/@thisPed.speed)
+    else
+      engine.tryPushButton()
+      engine.addWaitingPed(@thisPed)
+    end
+  end
+end
+
+class PedDone
+  def initalize(ped)
+    @thisPed = ped
+  end
+  def apply(engine)
+    engine.removeAgent(@thisPed)
+    engine.pedWil.newData(engine.time-@thisPed.minEnd)
+  end
+end
 
 
 
 
+class GoRed < Event
+  def apply(engine)
+    engine.signal.goRed(engine)
+  end
+end
 
+class GoYellow < Event
+  def apply(engine)
+    engine.signal.goYellow(engine)
+  end
+end
+class GoGreen < Event
+  def apply(engine)
+    engine.signal.goGreen(engine)
+  end
+end
 
-
+class ButtonPush < Event
+  def apply(engine)
+    engine.pushButton
+  end
+end
 
 class LogEvent < Event
   def apply(engine) 
@@ -36,7 +94,7 @@ class LogEvent < Event
         pedLog.push(agent.getPos(engine.time))
       end
     end
-    File.open("simLog.dat",a) do |log|
+    File.open(engine.logFile,a) do |log|
       log.syswrite('{')
       for pos in carLog
         log.syswrite('(')
@@ -56,7 +114,7 @@ class LogEvent < Event
       end
       log.syswrite('}')
       log.syswrite('{')
-      log.syswrite('green')
+      log.syswrite(engine.signal.state)
       log.syswrite('}')
       log.puts
     end
