@@ -1,4 +1,4 @@
-require "./sim.rb"
+#require "./sim.rb"
 class Car
 	attr_reader :x,:y,:carState,:a
 	attr_accessor :carBehind
@@ -12,7 +12,7 @@ class Car
 		@carState = CarState::CONSTANT
 		@eventCounter = 1
 		@leftMoving = leftMoving
-		@minExitTime =  time + (7 * $BLOCKWIDTH).to_f/speed
+		@minExitTime =  time + (7 * 330).to_f/speed
 		@maxSpeed = maxSpeed
 		@maxA = maxAcceleration
 		@a = maxAcceleration
@@ -20,7 +20,7 @@ class Car
 		@speed = maxSpeed
 		aheadCar.carBehind = self
 		if @leftMoving
-			@x = 7 * $BLOCKWIDTH
+			@x = 7 * 330
 			@y = 28
 		else
 			@x = 0
@@ -30,32 +30,31 @@ class Car
 	end
 	def evaluate(aheadCar)
 		state = @carState
-		
-		if @speed.abs < @maxSpeed.abs
-			if minSafeDistance(self,aheadCar)
-				if aheadCar.carState == CarState::ACCELERATING
-					if aheadCar.a.abs >= @maxA.abs
-						@a = @maxA
-						@carState = CarState::ACCELERATING
-					else
-						@carState = CarState::ACCELERATING
-						@a = aheadCar.a
-					end
-				end
-				if aheadCar.carState == CarState::DECELERATING
+		if minSafeDistance(self, aheadCar)
+			if aheadCar.carState == CarState::ACCELERATING and @speed.abs < @maxSpeed.abs
+				if aheadCar.a.abs >= @maxA.abs
+					@a = @maxA
+					@carState = CarState::ACCELERATING
+				else
+					@carState = CarState::ACCELERATING
 					@a = aheadCar.a
 				end
-				if aheadCar.carState == CarState::CONSTANT
-					if aheadCar.speed.abs >= @speed.abs
-						@carState = CarState::CONSTANT
-					else
-						@carState = CarState::DECELERATING
-					end
+			elsif aheadCar.carState == CarState::DECELERATING
+				@carState = CarState::DECELERATING
+				@a = aheadCar.a
+			elsif aheadCar.carState == CarState::CONSTANT
+				if aheadCar.speed.abs >= @speed.abs
+					@carState = CarState::CONSTANT
+				else
+					@carState = CarState::DECELERATING
 				end
-			else
-				@carState = CarState::ACCELERATING
 			end
-
+		else
+			if @speed.abs < @maxSpeed.abs
+				@carState = CarState::ACCELERATING
+			else
+				@carState = CarState::CONSTANT
+			end
 		end
 	end
 end
