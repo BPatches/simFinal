@@ -32,12 +32,17 @@ class XWalkDisplay < Gosu::Window
     @timeWarp.times{
       @log.advance
     }
-    if button_down?(char_to_button_id('>'))
-      puts " fjdnag"
-      @timeWarp += 1
-    elsif button_down?(char_to_button_id('<')) && @timeWarp > 1
-      @timeWarp -= 1
-    end
+  end
+  def button_down(id)
+  	case id
+  	when char_to_button_id('>')
+  		@timeWarp += 1
+  	when char_to_button_id('<')
+  		if @timeWarp > 1
+  			@timeWarp -= 1
+  		end
+  	end
+  		
   end
   #	def needs_redraw?
   #		return @i < 3
