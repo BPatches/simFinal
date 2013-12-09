@@ -14,7 +14,7 @@ class XWalkDisplay < Gosu::Window
     @edge = 64
     @winHeight = (@winWidth*@simHeight.to_f/@simWidth).round
 
-    @fps = 1
+    @fps = 10
     @roadColor = Gosu::Color.argb(0x66666666)
     super(@winWidth,@winHeight+2*@edge,false,1000.0/@fps)
     @timeWarp = 1
@@ -35,7 +35,7 @@ class XWalkDisplay < Gosu::Window
   end
   def button_down(id)
   	case id
-  	when char_to_button_id('>')
+  	when Gosu::MsMiddle
   		@timeWarp += 1
           puts"kdhafdklgnfadfa"
   	when char_to_button_id('<')

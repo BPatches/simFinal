@@ -90,7 +90,7 @@ end
 
 class LogEvent < Event
   def apply(engine) 
-    engine.addEvent(LogEvent.new(),engine.time + 1)
+    engine.addEvent(LogEvent.new(),engine.time + 0.1)
     carLog = []
     pedLog = []
     for agent in engine.agents
