@@ -13,29 +13,38 @@ class LogParser
     @pedPos=Hash.new{ |hash,value| hash[value]=Array.new}
     @carPos=Hash.new{ |hash,value| hash[value]=Array.new}
     @lightState=Hash.new
+    clReg=/{((?:\(.*?\))*)}.*/
+    clMR= /\(([-\d]+),([-\d]+)\)(.*)/
+    plReg=/{.*?}{((?:\(.*?\))*)}.*/
+    clMR=  /\(([-\d]+),([-\d]+)\)(.*)/
+    lightRg=/{.*?}{.*?}{(.*?)}/
     File.open(fname).each_line.with_index do |line,index|
-      
-      carList = /{((?:\(.*?\))*)}.*/.match(line)[1]
-      clistMatch = /\(([-\d]+),([-\d]+)\)(.*)/.match(carList)
-      while clistMatch do
-        @carPos[index/$LOGFREQ] << Pos.new(clistMatch[1].to_i,clistMatch[2].to_i)
-        clistMatch =  /\(([-\d]+),([-\d]+)\)(.*)/.match(clistMatch[3])
+      #puts line
+      carList = clReg.match(line).to_a
+      if carList.length >1 then
+        carList = carList[1]
+        clistMatch = clMR.match(carList).to_a
+        while clistMatch do
+          @carPos[index/$LOGFREQ] << Pos.new(clistMatch[1].to_i,clistMatch[2].to_i)
+          clistMatch = clMR.match(clistMatch[3])
+        end
       end
-      
-      pedList = /{.*?}{((?:\(.*?\))*)}.*/.match(line)[1]
-      plistMatch = /\(([-\d]+),([-\d]+)\)(.*)/.match(pedList)
-      while plistMatch do
-        @pedPos[index/$LOGFREQ] << Pos.new(plistMatch[1].to_i,plistMatch[2].to_i)
-        plistMatch =  /\(([-\d]+),([-\d]+)\)(.*)/.match(plistMatch[3])
+      pedList = plReg.match(line).to_a
+      if pedList.length > 1 then 
+        puts pedList[1]
+        pedList = pedList[1]
+        plistMatch =clMR.match(pedList).to_a
+        while plistMatch do
+          @pedPos[index/$LOGFREQ] << Pos.new(plistMatch[1].to_i,plistMatch[2].to_i)
+          plistMatch = clMR.match(plistMatch[3])
+        end
       end
-      
-      light = /{.*?}{.*?}{(.*?)}/.match(line)[1]
-      @lightState[index/$LOGFREQ] = light
+
+      light = lightRg.match(line).to_a
+      if light
+        light = light[1]
+        @lightState[index/$LOGFREQ] = light
+      end
     end
   end  
 end
-
-lp = LogParser.new("simLog.dat")
-puts lp.pedPos
-puts lp.carPos
-puts lp.lightState
