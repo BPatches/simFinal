@@ -16,6 +16,7 @@ end
 
 class PedSpawn < Event
   def initialize(speed)
+    puts "Ped speed #{speed}"
     @speed = speed
   end
 
@@ -26,7 +27,8 @@ class PedSpawn < Event
                     PedSpawn.new(engine.pedSpeed.getVal(engine.rand,$PEDSPEED)),
                     engine.pedArrive.nextArrival(engine.time/60, engine.rand, $PEDARRIVE)*60
                     )
-    engine.addEvent(PedArrive.new(thisPed),$BLOCKWIDTH / (2* @speed))
+    puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
+    engine.addEvent(PedArrive.new(thisPed),engine.time + ($BLOCKWIDTH / (2.0 * @speed)))
   end
 end
 
@@ -37,12 +39,13 @@ class PedArrive < Event
   end
   def apply(engine)
     @thisPed.x = $XWALKLOC
-    @thisPed.movingDown(engine.time)
     if engine.isWalk and engine.walkEnd - $XWALKLENGTH/@thisPed.speed > 0 then
       engine.addEvent(PedDone.new(@thisPed),engine.time + $XWALKLENGTH/@thisPed.speed)
+      @thisPed.movingDown(engine.time)
     else
       engine.tryPushButton()
       engine.addWaitingPed(@thisPed)
+      @thisPed.moving(engine.time,false)
     end
   end
 end

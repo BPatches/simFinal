@@ -11,18 +11,27 @@ class Ped
     @moveLeft = true
     @lastEvent = startTime
     @minEnd = startTime + $TOTALWALK / speed
+    @move = true
   end
 
   def movingDown(time)
     @moveLeft =false
     @lastEvent = time
+    @move = true
+  end
+  def moving(time,move)
+    @move = move
+    @lastEvent = time
   end
   def getPos(time)
-    if @moveLeft then
-      return [(@x - (time-@lastEvent)* speed).round,@y.round]
-    else 
-      return [@x.round, (@y + (time-@lastEvent) * speed).round]
+    if @move then
+      if @moveLeft then
+        return [(@x - (time-@lastEvent)* speed).round,@y.round]
+      else 
+        return [@x.round, (@y + (time-@lastEvent) * speed).round]
+      end
+    else
+      return [@x,@y]
     end
-  end 
-
+  end
 end

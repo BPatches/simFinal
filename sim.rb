@@ -33,6 +33,7 @@ class Engine
     @finalTime = endTime
     @eventsList = Array.new
     @logFile = logFile
+    File.open(logFile,"w")
   end
   
   def addAgent(agent)
@@ -98,6 +99,7 @@ class Engine
   def allowWalk()
     ped = @pedWaiting.shift
     while ped != nil do
+      ped.movingDown(@time)
       addEvent( PedDone.new(ped),@time + $XWALKLENGTH / ped.speed)
       ped = @pedWaiting.shift
     end
@@ -164,7 +166,9 @@ class Runner
   def initialize(time,seed, pedarrival, autoarrival, pedrate, autorate, trace)
     @engine = Engine.new(time,seed, pedarrival, autoarrival, pedrate, autorate, trace)
     #@engine.addEvent(CarSpawn.new(),0)
-    @engine.addEvent(PedSpawn.new(@engine.pedSpeed.getVal(@engine.rand,$PEDSPEED)),0)
+    @engine.addEvent(PedSpawn.new(@engine.pedSpeed.getVal(@engine.rand,$PEDSPEED)),
+                     @engine.pedArrive.nextArrival(@engine.time/60, @engine.rand, $PEDARRIVE)*60
+                     )
     @engine.addEvent(LogEvent.new(),0)
   end
   def run
@@ -178,7 +182,7 @@ class Runner
     puts "OUTPUT #{@engine.numCar}"
     puts "time"
     puts "OUTPUT #{(@engine.time-@engine.finalTime)/60}"
-
+    
     puts "min wait ped"
     puts "OUTPUT #{@engine.pedWil.min/60}"
     puts "average wait ped"
@@ -187,7 +191,7 @@ class Runner
     puts "OUTPUT #{(@engine.pedWil.var/@engine.pedWil.i)/60}"
     puts "maximum wait ped"
     puts "OUTPUT #{@engine.pedWil.max/60}"
-
+    
     puts "min wait car"
     puts "OUTPUT #{@engine.carWil.min/60}"
     puts "average wait car"
