@@ -18,7 +18,8 @@ class LogParser
     plReg=/{.*?}{((?:\(.*?\))*)}.*/
     clMR=  /\(([-\d]+),([-\d]+)\)(.*)/
     lightRg=/{.*?}{.*?}{(.*?)}/
-    File.open(fname).each_line.with_index do |line,index|
+    index = 0
+    File.open(fname).each_line do |line|
       #puts line
       carList = clReg.match(line).to_a
       if carList.length >1 then
@@ -45,6 +46,7 @@ class LogParser
         light = light[1]
         @lightState[index/$LOGFREQ] = light
       end
+      index += 1
     end
   end  
 end

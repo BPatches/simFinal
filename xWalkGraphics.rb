@@ -14,7 +14,7 @@ class XWalkDisplay < Gosu::Window
 		@edge = 64
 		@winHeight = (@winWidth*@simHeight.to_f/@simWidth).round
 		@sim = sim
-		@fps = 30
+		@fps = 1
 		@roadColor = Gosu::Color.argb(0x66666666)
 		super(@winWidth,@winHeight+2*@edge,false,1000.0/@fps)
 		@i = 0
