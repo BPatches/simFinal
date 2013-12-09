@@ -7,7 +7,7 @@ class Lambda
     v = 0
     @max = 0
     arrivalRates = File.new(file)
-    arrivalRates.each{ |line|
+    arrivalRates.each_line{ |line|
       vals = line.split
       for i in (0..1)
         vals[i] = vals[i].to_i
@@ -20,7 +20,6 @@ class Lambda
       last = vals[0]
     }
     rangeLambda[last...1.0/0] = v
-    
     @lambda = RangedHash.new(rangeLambda)
   end
   
@@ -31,7 +30,7 @@ class Lambda
   def nextArrival(time,rand,stream)
     s = time
     begin
-      s = s +  rand.exponential(1.0/@max)
+      s = s + rand.exponential(1.0/@max,stream)
       u = rand.uniform(0,@max,stream)
     end while u > @lambda[s]
     return s

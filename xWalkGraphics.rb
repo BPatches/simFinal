@@ -35,10 +35,9 @@ class XWalkDisplay < Gosu::Window
   end
   def button_down(id)
   	case id
-  	when Gosu::MsMiddle
+  	when 52
   		@timeWarp += 1
-          puts"kdhafdklgnfadfa"
-  	when char_to_button_id('<')
+  	when 51
   		if @timeWarp > 1
   			@timeWarp -= 1
   		end
