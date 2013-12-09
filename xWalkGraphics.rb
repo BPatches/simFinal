@@ -37,6 +37,7 @@ class XWalkDisplay < Gosu::Window
   	case id
   	when char_to_button_id('>')
   		@timeWarp += 1
+          puts"kdhafdklgnfadfa"
   	when char_to_button_id('<')
   		if @timeWarp > 1
   			@timeWarp -= 1
