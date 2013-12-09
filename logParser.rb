@@ -32,8 +32,11 @@ class LogParser
     if carList.length >1 then
       carList = carList[1]
       clistMatch = @clMR.match(carList).to_a
+      
       while clistMatch do
-        @carPos << Pos.new(clistMatch[1].to_i,clistMatch[2].to_i)
+        if clistMatch[1] then
+          @carPos << Pos.new(clistMatch[1].to_i,clistMatch[2].to_i)
+        end
         clistMatch = @clMR.match(clistMatch[3])
       end
     end
@@ -41,8 +44,11 @@ class LogParser
     if pedList.length > 1 then 
       pedList = pedList[1]
       plistMatch =@clMR.match(pedList).to_a
+      
       while plistMatch do
-        @pedPos << Pos.new(plistMatch[1].to_i,plistMatch[2].to_i)
+        if plistMatch[1] then
+          @pedPos << Pos.new(plistMatch[1].to_i,plistMatch[2].to_i)
+        end
         plistMatch = @clMR.match(plistMatch[3])
       end
     end
