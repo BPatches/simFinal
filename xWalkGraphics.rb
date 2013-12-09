@@ -17,7 +17,6 @@ class XWalkDisplay < Gosu::Window
 		@fps = 1
 		@roadColor = Gosu::Color.argb(0x66666666)
 		super(@winWidth,@winHeight+2*@edge,false,1000.0/@fps)
-		@i = 0
 		@timeWarp = 1
 		@pedImage = Gosu::Image.new(self,'man.bmp')
 		@carImage = Gosu::Image.new(self,'car.bmp')
@@ -30,7 +29,9 @@ class XWalkDisplay < Gosu::Window
 		@backgroundImage.draw(0,@edge,0)
 	end
 	def update
-		@i += @timeWarp
+		@timeWarp.times{
+			@log.advance
+		}
 		if button_down?(char_to_button_id('>'))
 			@timeWarp += 1
 		elsif button_down?(char_to_button_id('<')) && @timeWarp > 1
@@ -46,8 +47,8 @@ class XWalkDisplay < Gosu::Window
 		drawBackground
 		drawBackgroundImage
 		#@backgroundImage.draw(0,@edge,0)
-		drawList(@log.pedPos[@i],@pedImage)
-		drawList(@log.carPos[@i],@carImage)
+		drawList(@log.pedPos,@pedImage)
+		drawList(@log.carPos,@carImage)
 		case @log.lightState
 		when "GREEN"
 			@lightGreen.draw(@lightPosX,@lightPosY,1)
