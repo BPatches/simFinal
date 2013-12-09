@@ -81,3 +81,7 @@ test = RangedHash.new(grades)
 #puts l.max
 #randGen = LRandom.new
 #cd = CustDist.new('carRates.dat')
+#time = 0
+#15.times{
+#	puts time = l.nextArrival(time,randGen,0)
+#}
