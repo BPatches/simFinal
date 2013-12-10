@@ -66,13 +66,12 @@ class PedDone < Event
 end
 
 class ReEvalCar < CarE
-  def initialize(car,pos)
+  def initialize(car)
     @car = car
-    @pos = pos
   end
   def apply(engine)
    # puts "something"
-    @car.evaluate(engine,@pos)
+    @car.evaluate(engine)
   end
 end
 class CarSpawn < Event
@@ -113,6 +112,7 @@ def initialize(speed,acc,aheadCar,leftMoving)
       (330*3.5 -12 - 0.5 * @speed**2/(@acc.abs.to_f))/@speed.abs)
   end
 end
+
 class LightCheck < CarE   
   def initialize(car)
     @car = car
@@ -120,14 +120,16 @@ class LightCheck < CarE
   def apply(engine)
     if engine.signal.state == 'RED'
       @car.stop
+      @car.evaluate(engine)
     elsif  engine.signal.state == 'YELLOW'
       if !engine.canMakeItPassed(@car)
         @car.stop
+        @car.evaluate(engine)
       end
     end
-    @car.evaluate(engine)
   end
 end
+
 class CarArrive < CarE
   def initialize(car)
     @car = car

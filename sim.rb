@@ -119,6 +119,7 @@ class Engine
     @frontRCar.start
     @frontLCar.start
   end
+
   def canMakeItPassed(car)
     if car == nil
       return false
@@ -126,8 +127,16 @@ class Engine
     if passedLight(car)
       return true
     end
-
+    timeLeft = @signal.endYellow - @time
+    if car.leftMoving then 
+      distanceLeft = car.getPos(@time)[0] - ($XWALKLOC +32)
+    else
+      distanceLeft = -car.getPos(@time)[0] + ($XWALKLOC +32)
+    end    
+    return  distanceLeft.to_f/timeLeft.to_f > car.speed.abs          
   end
+
+
   def passedLight(car)
     if car.leftMoving
       if car.x < $XWALKLOC-12
@@ -149,8 +158,8 @@ class Engine
   def moreEvents
     return @eventsList.length > 0
   end
-  def reCar(car,time,newPos)
-    addEvent(ReEvalCar.new(car,newPos),@time+time)
+  def reCar(car,time)
+    addEvent(ReEvalCar.new(car),@time+time)
   end
   def allowWalk()
     ped = @pedWaiting.shift
@@ -182,7 +191,7 @@ end
 
 
 class Light
-  attr_reader :state, :endWalk
+  attr_reader :state, :endWalk, :endYellow
   def initialize()
     @state = "GREEN"
     @lastTransition=-100
@@ -200,6 +209,7 @@ class Light
 
   def goYellow(engine)
     @state = "YELLOW"
+    @endYellow = engine.time + 8
     engine.addEvent(GoRed.new(),engine.time + 8)
     engine.dumpButtonPush()
   end
