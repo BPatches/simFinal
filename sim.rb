@@ -18,8 +18,8 @@ $CARSPEED = 3
 $CARARRIVE = 4
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive,:frontLCar,:frontRCar
-  attr_accessor :stoppedCars
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive
+  attr_accessor :stoppedCars , :frontLCar,:frontRCar
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
     @pedWaiting = []
@@ -94,13 +94,7 @@ class Engine
     @eventsList.push(newEvent)
     @eventsList.sort!
   end
-  def addLightCheck(car)
-    if passedLight(car)
-      return
-    else
-      addEvent(LightCheck.new(car),@time)
-    end
-  end
+
   def lightStop
     car = @frontRCar
     while canMakeItPassed(car)
@@ -252,8 +246,15 @@ class Runner
    
   end
   def run
+    logTime = 30
     while @engine.moreEvents do
-      @engine.apply(@engine.nextEvent)
+      #if @engine.time > logTime then
+       
+      #puts "the time is #{@engine.time}"
+      nextEvent = @engine.nextEvent
+      #puts nextEvent.class
+      #end
+      @engine.apply(nextEvent)
     end
 =begin
     puts "Num peds"

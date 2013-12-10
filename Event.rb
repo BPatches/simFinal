@@ -15,7 +15,10 @@ class Event
 end
 
 class CarE < Event
-  attr_reader :car
+  attr_reader :car, :time
+  def <=>(other)
+    return @time <=> other.time
+  end
 end
 
 class PedSpawn < Event
@@ -31,7 +34,7 @@ class PedSpawn < Event
                     PedSpawn.new(engine.pedSpeed.getVal(engine.rand,$PEDSPEED)),
                     engine.pedArrive.nextArrival(engine.time/60, engine.rand, $PEDARRIVE)*60
                     )
-    #puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
+  
     engine.addEvent(PedArrive.new(thisPed),engine.time + ($BLOCKWIDTH / (2.0 * @speed)))
   end
 end
@@ -107,7 +110,7 @@ def initialize(speed,acc,aheadCar,leftMoving)
                     engine.rand.uniform(7,12),thisCar,@leftMoving),
                     engine.carArrive.nextArrival(engine.time/60, engine.rand, $CARARRIVE)*60,
                     )
-    #puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
+   
     engine.addEvent(CarArrive.new(thisCar),engine.time + 
       (330*3.5 -12 - 0.5 * @speed**2/(@acc.abs.to_f))/@speed.abs)
   end
@@ -165,13 +168,13 @@ end
 class GoYellow < Event
   def apply(engine)
     engine.signal.goYellow(engine)
-    engine.lightStop
+    #engine.lightStop
   end
 end
 class GoGreen < Event
   def apply(engine)
     engine.signal.goGreen(engine)
-    engine.lightGo
+    #engine.lightGo
   end
 end
 
