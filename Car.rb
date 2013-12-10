@@ -42,13 +42,14 @@ class Car
 	end
 	def evaluate(engine)
 		@x = getPos(engine.time)[0]
-		engine.cullEvents(self)#cull dos events
+		engine.cullEvents(self)
 		if @hasToStop
 			@carState = CarState::DECELERATING
+		else
+			#update state
 		end
-		#update state
 		engine.addLightCheck(self)
-		
+
 =begin	
 		if stopping
 			@hasToStop = stopping 

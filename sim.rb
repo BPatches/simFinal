@@ -107,8 +107,25 @@ class Engine
       car = car.carBehind
     end
     @frontRCar = car
+    car.stop
+    car = @frontLCar
+    while canMakeItPassed(car)
+      car = car.carBehind
+    end
+    @frontLCar = car
+    car.stop
   end
   def lightGo
+    @frontRCar.start
+    @frontLCar.start
+  end
+  def canMakeItPassed(car)
+    if car == nil
+      return false
+    end
+    if passedLight(car)
+      return true
+    end
 
   end
   def passedLight(car)
@@ -124,9 +141,7 @@ class Engine
       return false
     end
   end
-  def canMakeItPassed(car)
-    return false
-  end
+
   def nextEvent()
     return @eventsList.shift
   end
