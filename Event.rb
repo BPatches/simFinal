@@ -13,10 +13,12 @@ class Event
     return
   end
 end
-
+class CarE < Event
+  attr_reader :car
+end
 class PedSpawn < Event
   def initialize(speed)
-    puts "Ped speed #{speed}"
+    #puts "Ped speed #{speed}"
     @speed = speed
   end
 
@@ -27,7 +29,7 @@ class PedSpawn < Event
                     PedSpawn.new(engine.pedSpeed.getVal(engine.rand,$PEDSPEED)),
                     engine.pedArrive.nextArrival(engine.time/60, engine.rand, $PEDARRIVE)*60
                     )
-    puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
+    #puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
     engine.addEvent(PedArrive.new(thisPed),engine.time + ($BLOCKWIDTH / (2.0 * @speed)))
   end
 end
@@ -62,8 +64,60 @@ class PedDone < Event
   end
 end
 
+class ReEvalCar < CarE
+  def initialize(car,pos)
+    @car = car
+    @pos = pos
+  end
+  def apply(engine)
+    car.evaluate(car.aheadCar,engine,@pos)
+  end
+end
+class CarSpawn < Event
+def initialize(speed,acc,aheadCar,leftMoving)
+    #puts "Ped speed #{speed}"
+    if leftMoving
+      @speed = -speed
+      @acc = -acc
+    else
+      @speed = speed
+      @acc = acc
+    end
+    @aheadCar = aheadCar
+    @leftMoving = leftMoving
+  end
 
+  def apply(engine)
+    thisCar = Car.new(@speed,@acc,engine.time,@aheadCar,@leftMoving)
+    engine.addAgent(thisCar)
+    engine.addEvent(
+                    CarSpawn.new(engine.carSpeed.getVal(engine.rand,$CARSPEED),
+                    engine.rand.uniform(7,12),thisCar,@leftMoving),
+                    engine.carArrive.nextArrival(engine.time/60, engine.rand, $CARARRIVE)*60,
+                    )
+    #puts " it is now #{engine.time} this pedestrian will arive at #{engine.time + ($BLOCKWIDTH / (2.0 * @speed))}"
+    engine.addEvent(CarArrive.new(thisCar),engine.time + 
+      (330*3.5 -12 - 0.5 * @speed**2/(@acc.abs.to_f))/@speed.abs)
+  end
+end
 
+class CarArrive < CarE
+  def initialize(car)
+    @car = car
+  end
+  def apply(engine)
+
+  end
+end
+class CarStop < CarE
+  def initialize(car)
+    @car = car
+  end
+  def apply(engine)
+    @car.stop
+    engine.stoppedCars << self
+  end
+end
 
 class GoRed < Event
   def apply(engine)
@@ -94,11 +148,11 @@ class LogEvent < Event
     carLog = []
     pedLog = []
     for agent in engine.agents
-#      if agent.class == Car
-#        carLog.push(agent.getPos(engine.time))
-#      else 
+      if agent.class == Car
+        carLog.push(agent.getPos(engine.time))
+      else 
         pedLog.push(agent.getPos(engine.time))
-#      end
+      end
     end
     File.open(engine.logFile,"a") do |log|
       log.syswrite('{')

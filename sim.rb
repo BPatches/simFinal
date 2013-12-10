@@ -2,6 +2,7 @@ require "./LRandom.rb"
 require "./Welford.rb"
 require "./distributions.rb"
 require "./Ped.rb"
+require "./Car.rb"
 require "./Event.rb"
 
 $BLOCKWIDTH = 330
@@ -13,10 +14,12 @@ $TOTALWALK = 330/2 + 46
 $PEDSPEED = 0
 $PEDARRIVE = 1
 $PUSHBUTTON = 2
-
+$CARSPEED = 3
+$CARARRIVE = 4
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile, :time
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile, :time,:carSpeed,:carArrive
+  attr_accessor :stoppedCars
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
     @pedWaiting = []
@@ -33,6 +36,7 @@ class Engine
     @finalTime = endTime
     @eventsList = Array.new
     @logFile = logFile
+    @stoppedCars = []
     File.open(logFile,"w")
   end
   
@@ -76,7 +80,11 @@ class Engine
   def dumpButtonPush
     @eventsList.reject!{|item| item.class == ButtonPush}
   end
-
+  def cullEvents(car)
+    @eventsList.reject!{|event| 
+     event.is_a?(CarE) and event.car == car 
+    }
+  end
   def addEvent(newEvent,time)
     newEvent.time = time
     if(newEvent.class == PedSpawn or newEvent.class == LogEvent)# or newEvent.class == CarSpawn) then
@@ -116,7 +124,12 @@ class Engine
   def removeAgent(agent)
     @agents.delete(agent)
   end
-  
+  def startCars
+    for car in @stoppedCars
+      car.start
+    end
+    @stoppedCars = []
+  end
 end
 
 
@@ -170,6 +183,15 @@ class Runner
                      @engine.pedArrive.nextArrival(@engine.time/60, @engine.rand, $PEDARRIVE)*60
                      )
     @engine.addEvent(LogEvent.new(),0)
+    @engine.addEvent(CarSpawn.new(@engine.carSpeed.getVal(@engine.rand,$CARSPEED),
+      @engine.rand.uniform(7,12),nil,false),
+                    @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60,
+                    )
+    @engine.addEvent(CarSpawn.new(@engine.carSpeed.getVal(@engine.rand,$CARSPEED),
+      @engine.rand.uniform(7,12),nil,true),
+                    @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60,
+                    )
+   
   end
   def run
     while @engine.moreEvents do

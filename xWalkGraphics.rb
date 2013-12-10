@@ -54,7 +54,7 @@ class XWalkDisplay < Gosu::Window
     drawBackgroundImage
     #@backgroundImage.draw(0,@edge,0)
     drawList(@log.pedPos,@pedImage)
-    drawList(@log.carPos,@carImage)
+    drawList(@log.carPos,@carImage,false)
     case @log.lightState
     when "GREEN"
       @lightGreen.draw(@lightPosX,@lightPosY,1)
@@ -63,43 +63,14 @@ class XWalkDisplay < Gosu::Window
     when "RED"
       @lightRed.draw(@lightPosX,@lightPosY,1)
     end
-    #drawRoads
-    #drawBlocks
-    #drawXWalk
-    #drawList()
-    #@pedImage.draw(0,0,0)
-    #for agent in log[i]
-    #end
   end
   def drawBackgroundImage
-    #@backgroundImage.draw(0,@edge,0)
-    
     scale = @winWidth/@backgroundImage.width.to_f
     @backgroundImage.draw(0,@edge,0,scale,scale)
   end
-  def drawImage(image)
 
-  end
   def drawBackground(color = Gosu::Color.argb(0xffffffff))
     draw_quad(0,0,color,@winWidth,0,color,0,@winHeight+2*@edge,color,@winWidth,@winHeight+2*@edge,color,0,:default)
-  end
-  def drawRoads
-    drawRoad(@winHeight/2.0,true,50)
-    #drawRoad(@winWidth/2.0,false,50)
-  end
-
-  def drawRoad(pos,ew,width,color = @roadColor)
-    if ew
-      draw_quad(0, pos, color, @winWidth, pos, color,0, pos+width, color, @winWidth, pos+width, color,2,:default)
-    else
-      draw_quad(pos,0,color,pos,@winHeight,color,pos+width,0,color,pos+width,@winHeight,color,2,:default)
-    end
-  end
-  def drawBlocks
-
-  end
-  def drawXWalk
-
   end
   def drawList(list,image,ped = true)
     for agent in list
@@ -108,7 +79,8 @@ class XWalkDisplay < Gosu::Window
       drawX = x.to_f/@simWidth*@winWidth
       drawY = y.to_f/@simHeight*@winHeight+@edge
       if ped
-        drawY -= image.height
+      	drawX -= image.width/2.0
+        drawY -= (image.height)
       end
       image.draw(drawX,drawY,1)
     end
