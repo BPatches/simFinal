@@ -1,6 +1,6 @@
 #require "./sim.rb"
 class Car
-	attr_reader :x,:y,:carState,:a,:speed,:maxA
+	attr_reader :x,:y,:carState,:a,:speed,:maxA,:leftMoving
 	attr_accessor :carBehind,:aheadCar
 	module CarState
 		ACCELERATING = 1
@@ -31,46 +31,58 @@ class Car
 			@x = 0
 			@y = 5
 		end
-		#evaluate(aheadCar)
+		
 	end
 	def start
 		@hasToStop = false
 		evaluate
+	end 
+	def stop
+		@hasToStop = true
 	end
-	def evaluate(aheadCar,engine,pos,stopping = false)
+	def evaluate(engine)
+		@x = getPos(engine.time)[0]
+		engine.cullEvents(self)#cull dos events
+		if @hasToStop
+			@carState = CarState::DECELERATING
+		end
+		#update state
+		engine.addLightCheck(self)
+		
+=begin	
 		if stopping
 			@hasToStop = stopping 
 		end
-		@x = pos
+		@x = getPos(engine.time)[0]
 		@lastTime = engine.time
 		engine.cullEvents(self)#cull dos events
 		startState = @carState
 		if !@hasToStop
-			if minSafeDistance(aheadCar)
-				if aheadCar.carState == CarState::ACCELERATING and @speed.abs < @maxSpeed.abs
-					if aheadCar.a.abs >= @maxA.abs
+			if minSafeDistance(@aheadCar)
+				if @aheadCar.carState == CarState::ACCELERATING and @speed.abs < @maxSpeed.abs
+					if @aheadCar.a.abs >= @maxA.abs
 						@carState = CarState::ACCELERATING
 						@a = @maxA
 					else
 						@carState = CarState::ACCELERATING
-						@a = aheadCar.a
+						@a = @aheadCar.a
 					end
 					nextX = getPos((@maxSpeed.abs-@speed.abs).abs/@a.to_f)[0]
 					engine.reCar(self,(@maxSpeed.abs-@speed.abs).abs/@a.to_f,nextX)#dat time
-				elsif aheadCar.carState == CarState::DECELERATING
+				elsif @aheadCar.carState == CarState::DECELERATING
 					@carState = CarState::DECELERATING
-					@a = [aheadCar.a.abs,@maxA.abs].min
+					@a = [@aheadCar.a.abs,@maxA.abs].min
 					nextX = getPos(@speed.abs/@a.to_f)[0]
 					engine.reCar(self,@speed.abs/@a.to_f,nextX)#dat time
 					engine.addEvent(CarStop.new(self),engine.time + (@speed/@a).abs)
 					
-				elsif aheadCar.carState == CarState::CONSTANT
-					if aheadCar.speed.abs >= @speed.abs
+				elsif @aheadCar.carState == CarState::CONSTANT
+					if @aheadCar.speed.abs >= @speed.abs
 						@carState = CarState::CONSTANT
 					else
 						@carState = CarState::DECELERATING
-						nextX = getPos((aheadCar.speed.abs-@speed.abs).abs/@a.to_f)[0]
-						engine.reCar(self,(aheadCar.speed.abs-@speed.abs).abs/@a.to_f,nextX)#dat time
+						nextX = getPos((@aheadCar.speed.abs-@speed.abs).abs/@a.to_f)[0]
+						engine.reCar(self,(@aheadCar.speed.abs-@speed.abs).abs/@a.to_f,nextX)#dat time
 						engine.addEvent(CarStop.new(self),engine.time + (@speed/@a).abs)
 						
 					end
@@ -91,9 +103,10 @@ class Car
 		end
 		engine.addEvent(CarArrive.new(self),engine.time + 
       (330*3.5 -12 - (@x - 330*3.5).abs - 0.5 * @carState.abs*@speed**2/((@a).abs.to_f))/@speed.abs)
-		if @carState != startState
-			@carBehind.evaluate(self,engine)
+		if @carState != startState && @carBehind != nil
+			@carBehind.evaluate(engine,@carBehind.getPos(engine.time))
 		end
+=end
 	end
 	def minSafeDistance(otherCar)
 		if otherCar == nil

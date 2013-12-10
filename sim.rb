@@ -18,12 +18,14 @@ $CARSPEED = 3
 $CARARRIVE = 4
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile, :time,:carSpeed,:carArrive
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive,:frontLCar,:frontRCar
   attr_accessor :stoppedCars
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
     @pedWaiting = []
     @agents = []
+    @frontLCar = nil
+    @frontRCar = nil
     @signal = Light.new()
     @rand = LRandom.new(seed,5)
     @pedWil = Welford.new(20)
@@ -60,11 +62,9 @@ class Engine
     end
     addEvent(ButtonPush.new(),@time + 60)
   end
-  
-  def pushButton
+    def pushButton
     @signal.pushButton(self)
   end
-
   def isWalk
     return @signal.state == "RED"
   end
@@ -76,7 +76,6 @@ class Engine
   def walkEnd
     return @signal.endWalk - @time
   end
-
   def dumpButtonPush
     @eventsList.reject!{|item| item.class == ButtonPush}
   end
@@ -95,7 +94,39 @@ class Engine
     @eventsList.push(newEvent)
     @eventsList.sort!
   end
-  
+  def addLightCheck(car)
+    if passedLight(car)
+      return
+    else
+      addEvent(LightCheck.new(car),@time)
+    end
+  end
+  def lightStop
+    car = @frontRCar
+    while canMakeItPassed(car)
+      car = car.carBehind
+    end
+    @frontRCar = car
+  end
+  def lightGo
+
+  end
+  def passedLight(car)
+    if car.leftMoving
+      if car.x < $XWALKLOC-12
+        return true
+      end
+      return false
+    else
+      if car.x > $XWALKLOC + 12
+        return true
+      end
+      return false
+    end
+  end
+  def canMakeItPassed(car)
+    return false
+  end
   def nextEvent()
     return @eventsList.shift
   end
@@ -103,7 +134,9 @@ class Engine
   def moreEvents
     return @eventsList.length > 0
   end
-
+  def reCar(car,time,newPos)
+    addEvent(ReEvalCar.new(car,newPos),@time+time)
+  end
   def allowWalk()
     ped = @pedWaiting.shift
     while ped != nil do

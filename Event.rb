@@ -13,9 +13,11 @@ class Event
     return
   end
 end
+
 class CarE < Event
   attr_reader :car
 end
+
 class PedSpawn < Event
   def initialize(speed)
     #puts "Ped speed #{speed}"
@@ -33,7 +35,6 @@ class PedSpawn < Event
     engine.addEvent(PedArrive.new(thisPed),engine.time + ($BLOCKWIDTH / (2.0 * @speed)))
   end
 end
-
 
 class PedArrive < Event
   def initialize(ped)
@@ -70,7 +71,8 @@ class ReEvalCar < CarE
     @pos = pos
   end
   def apply(engine)
-    car.evaluate(car.aheadCar,engine,@pos)
+   # puts "something"
+    @car.evaluate(engine,@pos)
   end
 end
 class CarSpawn < Event
@@ -88,7 +90,18 @@ def initialize(speed,acc,aheadCar,leftMoving)
   end
 
   def apply(engine)
+
     thisCar = Car.new(@speed,@acc,engine.time,@aheadCar,@leftMoving)
+    if @leftMoving
+      if engine.frontLCar == nil
+        engine.frontLCar = thisCar
+      end
+    else
+      if engine.frontRCar == nil
+        engine.frontRCar = thisCar
+      end
+    end
+    thisCar.evaluate(engine)
     engine.addAgent(thisCar)
     engine.addEvent(
                     CarSpawn.new(engine.carSpeed.getVal(engine.rand,$CARSPEED),
@@ -100,7 +113,21 @@ def initialize(speed,acc,aheadCar,leftMoving)
       (330*3.5 -12 - 0.5 * @speed**2/(@acc.abs.to_f))/@speed.abs)
   end
 end
-
+class LightCheck < CarE   
+  def initialize(car)
+    @car = car
+  end
+  def apply(engine)
+    if engine.signal.state == 'RED'
+      @car.stop
+    elsif  engine.signal.state == 'YELLOW'
+      if !engine.canMakeItPassed(@car)
+        @car.stop
+      end
+    end
+    @car.evaluate(engine)
+  end
+end
 class CarArrive < CarE
   def initialize(car)
     @car = car
@@ -118,7 +145,15 @@ class CarStop < CarE
     engine.stoppedCars << self
   end
 end
-
+class CarDone < CarE
+  def initialize(car)
+    @car = car
+  end
+  def apply
+    #verify that leaving car is not the leading car
+    #gather statistics
+  end
+end
 class GoRed < Event
   def apply(engine)
     engine.signal.goRed(engine)
@@ -128,11 +163,13 @@ end
 class GoYellow < Event
   def apply(engine)
     engine.signal.goYellow(engine)
+    engine.lightStop
   end
 end
 class GoGreen < Event
   def apply(engine)
     engine.signal.goGreen(engine)
+    engine.lightGo
   end
 end
 
