@@ -101,17 +101,29 @@ class Engine
       car = car.carBehind
     end
     @frontRCar = car
-    car.stop
+    if car != nil 
+      car.stop
+      car.evaluate(self)
+    end
     car = @frontLCar
     while canMakeItPassed(car)
       car = car.carBehind
     end
     @frontLCar = car
-    car.stop
+    if car != nil
+      car.stop
+      car.evaluate(self)
+    end
   end
   def lightGo
-    @frontRCar.start
-    @frontLCar.start
+    if @frontRCar != nil
+      @frontRCar.start
+      @frontRCar.evaluate(self)
+    end
+    if @frontLCar != nil
+      @frontLCar.start
+      @frontLCar.evaluate(self)
+    end
   end
 
   def canMakeItPassed(car)
@@ -127,7 +139,11 @@ class Engine
     else
       distanceLeft = -car.getPos(@time)[0] + ($XWALKLOC +32)
     end    
-    return  distanceLeft.to_f/timeLeft.to_f > car.speed.abs          
+    if distanceLeft.to_f/timeLeft.to_f > car.speed.abs          
+      puts "can't make it"
+      return false
+    end
+    return true
   end
 
 
@@ -178,6 +194,7 @@ class Engine
   def startCars
     for car in @stoppedCars
       car.start
+      car.evaluate(@time)
     end
     @stoppedCars = []
   end
@@ -202,10 +219,12 @@ class Light
   end
 
   def goYellow(engine)
+    puts "try stop"
     @state = "YELLOW"
     @endYellow = engine.time + 8
     engine.addEvent(GoRed.new(),engine.time + 8)
     engine.dumpButtonPush()
+    engine.lightStop()
   end
 
   def goRed(engine)
@@ -219,7 +238,7 @@ class Light
   def goGreen(engine)
     @state = "GREEN"
     @lastTransition = engine.time
-    engine.allowDrive()
+    engine.lightGo
   end
 
 end
