@@ -221,7 +221,6 @@ class Light
   end
 
   def goYellow(engine)
-    puts "try stop"
     @state = "YELLOW"
     @endYellow = engine.time + 8
     engine.addEvent(GoRed.new(),engine.time + 8)
