@@ -4,7 +4,7 @@ require "./distributions.rb"
 require "./Ped.rb"
 require "./Car.rb"
 require "./Event.rb"
-
+#require "./Heap"
 $BLOCKWIDTH = 330
 $PEDSTARTX = $BLOCKWIDTH*4 
 $PEDSTARTY = 0
@@ -41,7 +41,9 @@ class Engine
     @stoppedCars = []
     File.open(logFile,"w")
   end
-  
+  def lightState
+    return signal.state == 'YELLOW' || signal.state == 'RED'
+  end
   def addAgent(agent)
     @agents << agent
   end
@@ -257,6 +259,7 @@ class Runner
                      @engine.pedArrive.nextArrival(@engine.time/60, @engine.rand, $PEDARRIVE)*60
                      )
     @engine.addEvent(LogEvent.new(),0)
+
     @engine.addEvent(CarSpawn.new(@engine.carSpeed.getVal(@engine.rand,$CARSPEED),
                                   @engine.rand.uniform(7,12),nil,false),
                      @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60
@@ -266,7 +269,7 @@ class Runner
                      @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60
                      )
     
-  
+
   end
   def run
     logTime = 30

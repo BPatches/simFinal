@@ -18,14 +18,14 @@ class XWalkDisplay < Gosu::Window
     @roadColor = Gosu::Color.argb(0x66666666)
     super(@winWidth,@winHeight+2*@edge,false,1000.0/@fps)
     @timeWarp = 1
-    @pedImage = Gosu::Image.new(self,'man.bmp')
-    @carImage = Gosu::Image.new(self,'car.bmp')
-    @backgroundImage = Gosu::Image.new(self,'simFinal.bmp')
+    @pedImage = Gosu::Image.new(self,'images/man.bmp')
+    @carImage = Gosu::Image.new(self,'images/car.bmp')
+    @backgroundImage = Gosu::Image.new(self,'images/simFinal.bmp')
     @lightPosX = @winWidth/2.0-64
     @lightPosY = 0
-    @lightRed = Gosu::Image.new(self,'red.bmp')
-    @lightYellow = Gosu::Image.new(self,'yellow.bmp')
-    @lightGreen = Gosu::Image.new(self,'green.bmp')
+    @lightRed = Gosu::Image.new(self,'images/red.bmp')
+    @lightYellow = Gosu::Image.new(self,'images/yellow.bmp')
+    @lightGreen = Gosu::Image.new(self,'images/green.bmp')
     #	@backgroundImage.draw(0,@edge,0)
   end
   def update
