@@ -200,7 +200,7 @@ class Car
       #           engine.reCar(self,0.1)
       d = 7*330-@x
       if ( a != 0 ) then
-        engine.addEvent(CarDone.new(self), engine.time + (-@speed + Math.sqrt((@speed**2 + 2 * @a * d).abs))/@a)
+        engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
       elsif (@speed != 0)
         engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
       end
