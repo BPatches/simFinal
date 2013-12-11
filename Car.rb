@@ -14,6 +14,7 @@ class Car
     @eventCounter = 1
     @leftMoving = leftMoving
     @minExitTime =  time + (7 * 330).to_f/maxSpeed
+    puts @minExitTime
     @maxSpeed = maxSpeed
     @maxA = maxAcceleration
     @a = maxAcceleration
@@ -212,13 +213,19 @@ class Car
         xAcc = 0.5 * tAcc**2 * @a
         if (d < xAcc)
           engine.addEvent(CarDone.new(self), engine.time + (-@speed + Math.sqrt((@speed**2 +2*@a * d).abs))/@a)
+          puts "leave a at #{engine.time + (-@speed + Math.sqrt((@speed**2 +2*@a * d).abs))/@a}"
         else
-          engine.addEvent(CarDone.new(self), engine.time + (@x-xAcc)/@maxSpeed)
-        end
+          engine.addEvent(CarDone.new(self), engine.time + (d-xAcc)/@maxSpeed + tAcc)
+          puts "leave  b at #{engine.time + (d-xAcc)/@maxSpeed + tAcc}"
+          puts xAcc
+          puts tAcc
+          puts d
+        end 
       elsif(@speed != 0)
         engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
+        puts "leave  c at #{engine.time + (d/@speed)}"
       end
-
+      
     end
     puts @changeStratCount
     @changeStratCount += 1
