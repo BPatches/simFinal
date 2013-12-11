@@ -150,13 +150,27 @@ class CarStop < CarE
     engine.stoppedCars << self
   end
 end
+
+
+
+
+
 class CarDone < CarE
   def initialize(car)
     @car = car
   end
-  def apply
-    #verify that leaving car is not the leading car
-    #gather statistics
+  def apply(engine)
+    if @car.leftMoving
+      if engine.frontLCar === @car
+        engine.frontLCar = @car.carBehind
+      end
+    else
+      if engine.frontRCar === @car
+        engine.frontRCar = @car.carBehind
+      end
+    end
+    engine.removeAgent(@car)
+    engine.carWil.newData(engine.time-@car.minExitTime)
   end
 end
 class GoRed < Event
