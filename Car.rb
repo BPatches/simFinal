@@ -39,6 +39,9 @@ class Car
   def stop
     @hasToStop = true
   end
+  def getSpeed(time)
+    return @speed + @a *@carState * (time -@lastTime)
+  end
   def evaluate(engine)
     @x = getPos(engine.time)[0]
     @speed = (engine.time-@lastTime)*@a * @carState + @speed
@@ -77,7 +80,7 @@ class Car
               @a = @aheadCar.a
             end
             puts 1
-            engine.reCar(self,((@aheadCar.speed-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
+            engine.reCar(self,((@aheadCar.getSpeed(engine.time)-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
             engine.reCar(self,((@speed-@maxSpeed).abs+0.001)/@a.to_f.abs)#dat time
           else   
             @carState = CarState::CONSTANT
@@ -92,7 +95,7 @@ class Car
           
 
         elsif @aheadCar.carState == CarState::CONSTANT
-          if @aheadCar.speed.abs >= @speed.abs
+          if @aheadCar.getSpeed(engine.time).abs >= @speed.abs
             @carState = CarState::CONSTANT
             @a = 0
           else
@@ -101,7 +104,7 @@ class Car
             puts 3
 
             #puts @a.to_f
-            engine.reCar(self,((@aheadCar.speed.abs-@speed.abs).abs + 0.001)/@a.to_f.abs)#dat time
+            engine.reCar(self,((@aheadCar.getSpeed(engine.time).abs-@speed.abs).abs + 0.001)/@a.to_f.abs)#dat time
             engine.addEvent(CarStop.new(self),engine.time + (@speed/@a).abs)
 
           end
@@ -112,12 +115,13 @@ class Car
           puts 4
           @a = @maxA
           engine.reCar(self,((@maxSpeed.abs-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
+          engine.reCar(self,(@aheadCar.getLoc(engine.time)[0]
         else
           @carState = CarState::CONSTANT
           #puts " constant at #{@speed}"
-          if @aheadCar != nil and @aheadCar.speed < @speed
+          if @aheadCar != nil and @aheadCar.getSpeed(engine.time) < @speed
             puts 5
-            engine.reCar(self,((@x-@aheadCar.x)/(@speed-@aheadCar.speed)).abs)
+            engine.reCar(self,((@x-@aheadCar.x)/(@speed-@aheadCar.getSpeed(engine.time))).abs)
           end
         end
       end
