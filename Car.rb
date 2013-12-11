@@ -40,11 +40,14 @@ class Car
     @hasToStop = true
   end
   def getSpeed(time)
-    return @speed + @a *@carState * (time -@lastTime)
+    return @speed + @a * @carState * (time -@lastTime)
   end
   def evaluate(engine)
     @x = getPos(engine.time)[0]
     @speed = (engine.time-@lastTime)*@a * @carState + @speed
+    oldState = @carState
+
+=begin
     if (@speed.abs - @maxSpeed.abs > 1)
       puts "********YOU DONE GOOFED************"
       puts @speed
@@ -111,7 +114,7 @@ class Car
         @carState = CarState::CONSTANT
       end
     end
-=begin
+=end
          if @hasToStop
            if @speed.abs < 0.01
              @carState = CarState::DECELERATING
@@ -136,8 +139,8 @@ class Car
                    @a = @aheadCar.a
                  end
                  puts 1
-                 #engine.reCar(self,((@aheadCar.getSpeed(engine.time)-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
-                 #engine.reCar(self,((@speed-@maxSpeed).abs+0.001)/@a.to_f.abs)#dat time
+                 engine.reCar(self,((@aheadCar.getSpeed(engine.time)-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
+                 engine.reCar(self,((@speed-@maxSpeed).abs+0.001)/@a.to_f.abs)#dat time
                else   
                  @carState = CarState::CONSTANT
                  @a = 0
@@ -147,7 +150,7 @@ class Car
                @a = [@aheadCar.a.abs,@maxA.abs].min*(@maxA<=>0.0)
 
                puts 2
-               #engine.reCar(self,@speed.abs/@a.to_f.abs)#dat time
+               engine.reCar(self,@speed.abs/@a.to_f.abs)#dat time
                
 
              elsif @aheadCar.carState == CarState::CONSTANT
@@ -160,8 +163,8 @@ class Car
                  puts 3
 
                  #puts @a.to_f
-                 #engine.reCar(self,((@aheadCar.getSpeed(engine.time).abs-@speed.abs).abs + 0.001)/@a.to_f.abs)#dat time
-                 #engine.addEvent(CarStop.new(self),engine.time + (@speed/@a).abs)
+                 engine.reCar(self,((@aheadCar.getSpeed(engine.time).abs-@speed.abs).abs + 0.001)/@a.to_f.abs)#dat time
+                 engine.addEvent(CarStop.new(self),engine.time + (@speed/@a).abs)
 
                end
              end
@@ -170,36 +173,34 @@ class Car
                @carState = CarState::ACCELERATING
                puts 4
                @a = @maxA
-               #engine.reCar(self,((@maxSpeed.abs-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
+               engine.reCar(self,((@maxSpeed.abs-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
                if (!@aheadCar == nil)
-                 #engine.reCar(self,(@aheadCar.getSpeed(engine.time) - @speed)/@a)
-                 #engine.reCar(self,
-                 #             ((@x-@aheadCar.getPos(engine.time)[0]).abs - 
-                 #               (20 + 0.5 * @maxSpeed**2/(@maxA.abs.to_f)))
-                 #              /
-                 #              (@maxSpeed-@aheadCar.getSpeed(engine.time))).abs)
+                 engine.reCar(self,(@aheadCar.getSpeed(engine.time) - @speed)/@a)
+                 engine.reCar(self,
+                              ((@x-@aheadCar.getPos(engine.time)[0]).abs -
+                               (20 + 0.5 * @maxSpeed**2/(@maxA.abs.to_f)))/
+                              (@maxSpeed-@aheadCar.getSpeed(engine.time)).abs)
                end
              else
                @carState = CarState::CONSTANT
                #puts " constant at #{@speed}"
                if @aheadCar != nil and @aheadCar.getSpeed(engine.time) < @speed
                  puts 5
-                 #engine.reCar(self,
-                 #             ((@x-@aheadCar.getPos(engine.time)[0]).abs - 
-                 #               (20 + 0.5 * @speed**2/(@maxA.abs.to_f)))
-                 #              /
-                 #              (@speed-@aheadCar.getSpeed(engine.time))).abs)
+                 engine.reCar(self,
+                              ((@x-@aheadCar.getPos(engine.time)[0]).abs - 
+                               (20 + 0.5 * @speed**2/(@maxA.abs.to_f)))/
+                              (@speed-@aheadCar.getSpeed(engine.time)).abs)
                end
              end
            end
-           engine.reCar(self,0.1)
+#           engine.reCar(self,0.1)
          end
          
-         #if @carState != oldState and carBehind != nil
-         #  carBehind.evaluate(engine)
-         #end
-=end    
-      engine.reCar(self,0.5)
+         if @carState != oldState and carBehind != nil
+           carBehind.evaluate(engine)
+         end
+    
+#      engine.reCar(self,0.5)
     end
 
     def minSafeDistance(otherCar,engine)
