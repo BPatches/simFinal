@@ -18,7 +18,7 @@ $CARSPEED = 3
 $CARARRIVE = 4
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive,:carEvWil,:carWil
   attr_accessor :stoppedCars , :frontLCar,:frontRCar
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
@@ -30,6 +30,7 @@ class Engine
     @rand = LRandom.new(seed,5)
     @pedWil = Welford.new(20)
     @carWil = Welford.new(20)
+    @carEvWil = Welford.new(1)
     @carArrive = Lambda.new(carArriveF)
     @pedArrive = Lambda.new(pedArriveF)
     @pedSpeed = CustDist.new(pedSpeedF)
