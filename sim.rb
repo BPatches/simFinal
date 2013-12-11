@@ -99,7 +99,11 @@ class Engine
   end
 
   def lightStop
+    
     car = @frontRCar
+    if car == nil
+      puts "lost the front"
+    end
     while canMakeItPassed(car)
       car = car.carBehind
     end
@@ -107,6 +111,7 @@ class Engine
     if car != nil 
       car.stop
       car.evaluate(self)
+      puts " stoped something"
     end
     car = @frontLCar
     while canMakeItPassed(car)
@@ -116,6 +121,7 @@ class Engine
     if car != nil
       car.stop
       car.evaluate(self)
+      puts "stoped something"
     end
   end
   def lightGo

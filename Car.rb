@@ -119,6 +119,7 @@ class Car
     end
 =end
     if @hasToStop
+      puts "Trying to stop"
       if @speed.abs < 0.01
         @carState = CarState::DECELERATING
         timeToStop = @speed / @maxA.to_f
@@ -148,13 +149,12 @@ class Car
         elsif @aheadCar.carState == CarState::DECELERATING
           @carState = CarState::DECELERATING
           @a = [@aheadCar.a.abs,@maxA.abs].min*(@maxA<=>0.0)
-          puts 2
           if (@speed.abs > 0.01)
             engine.reCar(self,@speed.abs/@a.to_f.abs+0.1)#dat time
           else
             @carState = CarState::CONSTANT
             @speed = 0
-            puts "stopped"
+            
           end
            
         elsif @aheadCar.carState == CarState::CONSTANT
@@ -164,7 +164,6 @@ class Car
           else
             @carState = CarState::DECELERATING
             @a = @maxA
-            puts 3
             
             #puts @a.to_f
             engine.reCar(self,
@@ -177,7 +176,7 @@ class Car
       else
         if @speed.abs < @maxSpeed.abs
           @carState = CarState::ACCELERATING
-          puts 4
+          
           @a = @maxA
           engine.reCar(self,((@maxSpeed.abs-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
           if (!@aheadCar == nil)
@@ -191,7 +190,6 @@ class Car
           @carState = CarState::CONSTANT
           #puts " constant at #{@speed}"
           if @aheadCar != nil and @aheadCar.getSpeed(engine.time) < @speed
-            puts 5
             engine.reCar(self,
                          ((@x-@aheadCar.getPos(engine.time)[0]).abs - 
                           (20 + 0.5 * @speed**2/(@maxA.abs.to_f)))/

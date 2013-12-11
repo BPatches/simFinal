@@ -93,10 +93,12 @@ def initialize(speed,acc,aheadCar,leftMoving)
     if @leftMoving
       if engine.frontLCar == nil
         engine.frontLCar = thisCar
+        puts "setting the front"
       end
     else
       if engine.frontRCar == nil
         engine.frontRCar = thisCar
+        puts "setting the front"
       end
     end
     thisCar.evaluate(engine)
@@ -156,14 +158,13 @@ class CarDone < CarE
     @car = car
   end
   def apply(engine)
-    puts "LEFT BITCHES!!"
     engine.cullEvents(@car)
     if @car.leftMoving
-      if engine.frontLCar == @car
+      if engine.frontLCar === @car
         engine.frontLCar = @car.carBehind
       end
     else
-      if engine.frontRCar == @car
+      if engine.frontRCar === @car
         engine.frontRCar = @car.carBehind
       end
     end
@@ -181,13 +182,13 @@ end
 class GoYellow < Event
   def apply(engine)
     engine.signal.goYellow(engine)
-    #engine.lightStop
+    engine.lightStop
   end
 end
 class GoGreen < Event
   def apply(engine)
     engine.signal.goGreen(engine)
-    #engine.lightGo
+    engine.lightGo
   end
 end
 
