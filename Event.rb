@@ -172,7 +172,7 @@ class CarDone < CarE
     end
     engine.removeAgent(@car)
     engine.carWil.newData(engine.time-@car.minExitTime)
-    engine.carEvWil.newData(@car.changeStratCount)
+    engine.carEvWil.newData(@car.eventCounter)
   end
 end
 class GoRed < Event

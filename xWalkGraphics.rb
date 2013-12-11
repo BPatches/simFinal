@@ -62,6 +62,8 @@ class XWalkDisplay < Gosu::Window
       @lightYellow.draw(@lightPosX,@lightPosY,1)
     when "RED"
       @lightRed.draw(@lightPosX,@lightPosY,1)
+    else
+    	close
     end
   end
   def drawBackgroundImage
