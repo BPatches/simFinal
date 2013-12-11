@@ -1,3 +1,2 @@
-#!bin/usr/bash
-chmod SIM 755
-chmod VIS 755
+chmod 755 SIM
+chmod 755 VIS
