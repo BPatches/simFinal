@@ -212,7 +212,7 @@ class LogEvent < Event
         log.syswrite(pos[0])
         log.syswrite(',')
         log.syswrite(pos[1])
-        log.syswrite(')')	
+        log.syswrite(')')
       end
       log.syswrite('}')
       log.syswrite('{')
