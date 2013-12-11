@@ -1,5 +1,5 @@
 require 'gosu'
-require_relative 'logParser'
+require './logParser'
 #require_relative "ContSim"
 #sim = Sim.new
 #log = sim.run#log is an array of a list of objects in the sim and their positions
