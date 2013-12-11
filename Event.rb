@@ -28,6 +28,7 @@ class PedSpawn < Event
   end
 
   def apply(engine)
+    engine.numPed += 1
     thisPed = Ped.new(@speed,engine.time)
     engine.addAgent(thisPed)
     engine.addEvent(
@@ -88,7 +89,7 @@ def initialize(speed,acc,aheadCar,leftMoving)
   end
 
   def apply(engine)
-
+    engine.numCar += 1
     thisCar = Car.new(@speed,@acc,engine.time,@aheadCar,@leftMoving)
     if @leftMoving
       if engine.frontLCar == nil
