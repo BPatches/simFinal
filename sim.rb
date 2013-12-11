@@ -139,7 +139,7 @@ class Engine
     else
       distanceLeft = -car.getPos(@time)[0] + ($XWALKLOC +32)
     end    
-    if distanceLeft.to_f/timeLeft.to_f > car.speed.abs          
+    if distanceLeft.to_f/timeLeft.to_f > car.speed.abs and  distanceLeft.to_f/(timeLeft.to_f+12) < car.speed.abs then
       puts "can't make it"
       return false
     end
