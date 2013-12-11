@@ -25,7 +25,7 @@ class Car
     end
     @hasToStop = false
     if @leftMoving
-      @x = 7 * 330
+      @x = 0
       @y = 20
     else
       @x = 0

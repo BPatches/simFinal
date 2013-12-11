@@ -188,7 +188,9 @@ class LogEvent < Event
     for agent in engine.agents
       if agent.class == Car
         if agent.leftMoving then
-          x = 7 * 330 - (agent.getPos(engine.time)[0])
+         
+          x = (agent.getPos(engine.time)[0])
+          puts x
           y = agent.getPos(engine.time)[1]
           carLog.push([x,y])
         else  
