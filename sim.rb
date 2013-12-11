@@ -18,12 +18,13 @@ $CARSPEED = 3
 $CARARRIVE = 4
 
 class Engine
-  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive,:carEvWil,:carWil
-  attr_accessor :stoppedCars , :frontLCar,:frontRCar
+  attr_reader :agents , :rand, :pedArrive, :pedSpeed,:pedWil,:signal,:logFile,:time,:carSpeed,:carArrive,:carEvWil,:carWil, :endTime
+  attr_accessor :stoppedCars , :frontLCar,:frontRCar,:numCar,:numPed
   def initialize(endTime,seed,pedArriveF,carArriveF,
                  pedSpeedF,carSpeedF,logFile)
     @pedWaiting = []
     @agents = []
+    @endTime = endTime
     @frontLCar = nil
     @frontRCar = nil
     @signal = Light.new()
@@ -35,6 +36,8 @@ class Engine
     @pedArrive = Lambda.new(pedArriveF)
     @pedSpeed = CustDist.new(pedSpeedF)
     @carSpeed = CustDist.new(carSpeedF)
+    @numPed = 0
+    @numCar = 0
     @time = 0
     @finalTime = endTime
     @eventsList = Array.new
@@ -288,13 +291,13 @@ class Runner
       #end
       @engine.apply(nextEvent)
     end
-=begin
+
     puts "Num peds"
     puts "OUTPUT #{@engine.numPed}"
     puts "Num cars"
     puts "OUTPUT #{@engine.numCar}"
     puts "time"
-    puts "OUTPUT #{(@engine.time-@engine.finalTime)/60}"
+    puts "OUTPUT #{(@engine.time-@engine.endTime).abs/60}"
     
     puts "min wait ped"
     puts "OUTPUT #{@engine.pedWil.min/60}"
@@ -313,7 +316,17 @@ class Runner
     puts "OUTPUT #{(@engine.carWil.var/@engine.carWil.i)/60}"
     puts "maximum wait car"
     puts "OUTPUT #{@engine.carWil.max/60}"
-=end
+
+    puts "min num event"
+    puts "OUTPUT #{@engine.carEvWil.min/60}"
+    puts "avg num event"
+    puts "OUTPUT #{@engine.carEvWil.xBar/60}"
+    puts "std dev num event"
+    puts "OUTPUT #{(@engine.carEvWil.var/@engine.carWil.i)/60}"
+    puts "max num event"
+    puts "OUTPUT #{@engine.carEvWil.max/60}"
+
+
   end
 end
 
