@@ -1,6 +1,6 @@
 #require "./sim.rb"
 class Car
-  attr_reader :x,:y,:carState,:a,:speed,:maxA,:leftMoving
+  attr_reader :x,:y,:carState,:a,:speed,:maxA,:leftMoving, :changeStratCount
   attr_accessor :carBehind,:aheadCar
   module CarState
     ACCELERATING = 1
@@ -20,7 +20,8 @@ class Car
     @carBehind = nil
     @speed = maxSpeed
     @aheadCar = aheadCar
-  	@timeStep = 0.1
+    @timeStep = 0.1
+    @chageStratCount = 0
 
     if aheadCar != nil
       aheadCar.carBehind = self
@@ -43,17 +44,6 @@ class Car
   end
   def getSpeed(time)
     return @speed + @a * @carState * (time -@lastTime)
-  end
-  def safe(car,light)
-  	dontNeedToStop = true
-  	#if light
-  	#	dontNeedToStop =  (330*3.5 - @x).abs > (20 + 0.5 * @speed**2/(@maxA.abs.to_f))
-  	#end
-  	if car == nil
-  		return dontNeedToStop
-  	end
-  	puts (car.x - @x).abs
-  	return ((car.x - @x).abs >= (20 + 0.5 * @speed**2/(@maxA.abs.to_f)) and dontNeedToStop)
   end
   def evaluate(engine)
     @x = getPos(engine.time)[0]
@@ -210,12 +200,18 @@ class Car
         end
       end
       #           engine.reCar(self,0.1)
+      d = 7*330-@x
+      if ( a != 0 ) then
+        engine.addEvent(CarExit.new(self), (-@speed + Math.sqrt(@speed**2 + 2 * @a * d))/@a)
+      elsif (@speed != 0)
+        engine.addEvent(CarExit.new(self), (d/@speed))
+      end
     end
     
     if @carState != oldState and carBehind != nil
       carBehind.evaluate(engine)
     end
-
+    @changeStratCount += 1
     #      engine.reCar(self,0.5)
 
   end
