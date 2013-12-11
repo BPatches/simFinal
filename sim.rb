@@ -328,6 +328,7 @@ class Runner
 
   end
 end
-
-a= Runner.new(ARGV[1].to_i*60,ARGV[2].to_i,ARGV[3],ARGV[4],ARGV[5],ARGV[6],ARGV[7] )
-a.run
+if ARGV[0] == 'N'
+  a= Runner.new(ARGV[1].to_i*60,ARGV[2].to_i,ARGV[3],ARGV[4],ARGV[5],ARGV[6],ARGV[7] )
+  a.run
+end
