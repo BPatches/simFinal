@@ -89,7 +89,7 @@ class Engine
   end
   def addEvent(newEvent,time)
     newEvent.time = time
-    if(newEvent.class == PedSpawn or newEvent.class == LogEvent)# or newEvent.class == CarSpawn) then
+    if(newEvent.class == PedSpawn or newEvent.class == CarSpawn or newEvent.class == LogEvent)# or newEvent.class == CarSpawn) then
       if time > @finalTime
         return
       end

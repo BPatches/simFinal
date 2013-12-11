@@ -1,6 +1,6 @@
 #require "./sim.rb"
 class Car
-  attr_reader :x,:y,:carState,:a,:speed,:maxA,:leftMoving, :changeStratCount
+  attr_reader :x,:y,:carState,:a,:speed,:maxA,:leftMoving, :changeStratCount, :minExitTime
   attr_accessor :carBehind,:aheadCar
   module CarState
     ACCELERATING = 1
@@ -202,9 +202,9 @@ class Car
       #           engine.reCar(self,0.1)
       d = 7*330-@x
       if ( a != 0 ) then
-        engine.addEvent(CarDone.new(self), (-@speed + Math.sqrt(@speed**2 + 2 * @a * d))/@a)
+        engine.addEvent(CarDone.new(self), engine.time + (-@speed + Math.sqrt((@speed**2 + 2 * @a * d).abs))/@a)
       elsif (@speed != 0)
-        engine.addEvent(CarDone.new(self), (d/@speed))
+        engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
       end
     end
     
@@ -225,6 +225,7 @@ class Car
 
     if @x - otherCar.getPos(engine.time)[0] > 0
       puts "DAMNNN"
+      puts engine.time
     end
     return (@x - otherCar.getPos(engine.time)[0]).abs <= 20 + 0.5 * @speed**2/(@maxA.abs.to_f)+0.1
   end

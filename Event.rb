@@ -156,6 +156,8 @@ class CarDone < CarE
     @car = car
   end
   def apply(engine)
+    puts "LEFT BITCHES!!"
+    engine.cullEvents(@car)
     if @car.leftMoving
       if engine.frontLCar == @car
         engine.frontLCar = @car.carBehind
