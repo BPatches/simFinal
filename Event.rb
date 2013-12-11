@@ -80,13 +80,9 @@ end
 class CarSpawn < Event
 def initialize(speed,acc,aheadCar,leftMoving)
     #puts "Ped speed #{speed}"
-    if leftMoving
-      @speed = -speed
-      @acc = -acc
-    else
-      @speed = speed
-      @acc = acc
-    end
+   
+    @speed = speed
+    @acc = acc
     @aheadCar = aheadCar
     @leftMoving = leftMoving
   end
@@ -191,7 +187,13 @@ class LogEvent < Event
     pedLog = []
     for agent in engine.agents
       if agent.class == Car
-        carLog.push(agent.getPos(engine.time))
+        if agent.leftMoving then
+          x = 7 * 330 - (agent.getPos(engine.time)[0])
+          y = agent.getPos(engine.time)[1]
+          carLog.push([x,y])
+        else  
+          carLog.push(agent.getPos(engine.time))
+        end
       else 
         pedLog.push(agent.getPos(engine.time))
       end
