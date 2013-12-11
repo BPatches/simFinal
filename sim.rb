@@ -108,7 +108,9 @@ class Engine
     while canMakeItPassed(car)
       car = car.carBehind
     end
-    #@frontRCar = car
+    if car != nil
+      @frontRCar = car
+    end
     if car != nil 
       car.stop
       car.evaluate(self)
@@ -117,7 +119,9 @@ class Engine
     while canMakeItPassed(car)
       car = car.carBehind
     end
-    #@frontLCar = car
+    if car != nil then
+      @frontLCar = car
+    end
     if car != nil
       car.stop
       car.evaluate(self)

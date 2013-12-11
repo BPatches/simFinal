@@ -176,6 +176,11 @@ class Car
           end
         end
       else
+        if @aheadCar != nil and @aheadCar.carState != CarState::DECELERATING
+          #engine.reCar(self,
+          #               ((@x-@aheadCar.getPos(engine.time)[0]).abs)/
+          #               (@maxSpeed).abs)
+        end
         if @speed.abs < @maxSpeed.abs
           @carState = CarState::ACCELERATING
           
@@ -215,8 +220,9 @@ class Car
       end
 
     end
-    
+    puts @changeStratCount
     @changeStratCount += 1
+    puts @changeStratCount
     if @carState != oldState and carBehind != nil
       carBehind.evaluate(engine)
     end
