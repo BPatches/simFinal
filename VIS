@@ -1,2 +1,2 @@
-#!bin/usr/bash
+#!/usr/bin/bash
 ruby xWalkGraphics.rb $1

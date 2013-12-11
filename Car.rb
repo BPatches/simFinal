@@ -46,6 +46,10 @@ class Car
     return @speed + @a * @carState * (time -@lastTime)
   end
   def evaluate(engine)
+  	if @x > 7*330
+  		engine.addEvent(CarDone.new(self),0)
+  		return
+  	end
     @x = getPos(engine.time)[0]
     @speed = (engine.time-@lastTime)*@a * @carState + @speed
     oldState = @carState
@@ -199,11 +203,11 @@ class Car
       end
       #           engine.reCar(self,0.1)
       d = 7*330-@x
-      if ( a != 0 ) then
-        engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
-     elsif (@speed != 0)
-        engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
-      end
+    #  if ( a != 0 ) then
+    #    engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
+    # elsif (@speed != 0)
+    #   engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
+    #  end
     end
     
     if @carState != oldState and carBehind != nil
