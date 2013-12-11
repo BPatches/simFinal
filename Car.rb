@@ -46,11 +46,11 @@ class Car
     return @speed + @a * @carState * (time -@lastTime)
   end
   def evaluate(engine)
-  	if @x > 7*330
-  		engine.addEvent(CarDone.new(self),0)
-  		return
-  	end
     @x = getPos(engine.time)[0]
+    if @x > 7*330
+      engine.addEvent(CarDone.new(self),0)
+      return
+    end
     @speed = (engine.time-@lastTime)*@a * @carState + @speed
     oldState = @carState
     @lastTime = engine.time
