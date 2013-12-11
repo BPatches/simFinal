@@ -131,19 +131,13 @@ class Car
       if minSafeDistance(@aheadCar,engine) then 
         if @aheadCar.carState == CarState::ACCELERATING 
           if @speed.abs < @maxSpeed.abs
-            if @aheadCar == nil or @aheadCar.a.abs >= @maxA.abs
+            if @aheadCar.a.abs >= @maxA.abs
               @carState = CarState::ACCELERATING
               @a = @maxA
             else
               @carState = CarState::ACCELERATING
               @a = @aheadCar.a
-            end
-            puts 1
-            engine.reCar(self,
-                         ((@aheadCar.getSpeed(engine.time)-@speed.abs).abs+0.001)/
-                         @a.to_f.abs)
-
-            engine.reCar(self,((@speed-@maxSpeed).abs+0.001)/@a.to_f.abs)#dat time
+            end         
           else   
             @carState = CarState::CONSTANT
             @a = 0
