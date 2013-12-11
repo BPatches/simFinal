@@ -162,11 +162,11 @@ class CarDone < CarE
 
     engine.cullEvents(@car)
     if @car.leftMoving
-      if engine.frontLCar === @car
+      if engine.frontLCar == @car
         engine.frontLCar = @car.carBehind
       end
     else
-      if engine.frontRCar === @car
+      if engine.frontRCar == @car
         engine.frontRCar = @car.carBehind
       end
     end

@@ -119,16 +119,14 @@ class Car
     end
 =end
     if @hasToStop
-      puts "Trying to stop"
       if @speed.abs < 0.01
         @carState = CarState::DECELERATING
         timeToStop = @speed / @maxA.to_f
-        #engine.reCar(self,engine.time + timeToStop)
+        engine.reCar(self,engine.time + timeToStop)
         @a = @maxA
       else
         @carState = CarState::CONSTANT
         @a = 0
-        puts "STAPPPPPPPPPPPPPPPPPPPPPP"
         @speed = 0
       end
     else
@@ -200,16 +198,23 @@ class Car
       #           engine.reCar(self,0.1)
       d = 7*330-@x
       if ( a != 0 ) then
-        engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
-     elsif (@speed != 0)
+        deltaS = @maxSpeed - @speed
+        tAcc = deltaS/@a
+        xAcc = 0.5 * tAcc**2 * @a
+        if (d < xAcc)
+          engine.addEvent(CarDone.new(self), engine.time + (-@speed + Math.sqrt((@speed**2 +2*@a * d).abs))/@a)
+        else
+          engine.addEvent(CarDone.new(self), engine.time + (@x-xAcc)/@maxSpeed)
+        end
+      elsif(@speed != 0)
         engine.addEvent(CarDone.new(self), engine.time + (d/@speed))
       end
     end
     
+    @changeStratCount += 1
     if @carState != oldState and carBehind != nil
       carBehind.evaluate(engine)
     end
-    @changeStratCount += 1
     #      engine.reCar(self,0.5)
 
   end
