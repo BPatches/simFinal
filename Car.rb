@@ -21,7 +21,7 @@ class Car
     @speed = maxSpeed
     @aheadCar = aheadCar
     @timeStep = 0.1
-    @chageStratCount = 0
+    @changeStratCount = 0
 
     if aheadCar != nil
       aheadCar.carBehind = self
@@ -202,9 +202,9 @@ class Car
       #           engine.reCar(self,0.1)
       d = 7*330-@x
       if ( a != 0 ) then
-        engine.addEvent(CarExit.new(self), (-@speed + Math.sqrt(@speed**2 + 2 * @a * d))/@a)
+        engine.addEvent(CarDone.new(self), (-@speed + Math.sqrt(@speed**2 + 2 * @a * d))/@a)
       elsif (@speed != 0)
-        engine.addEvent(CarExit.new(self), (d/@speed))
+        engine.addEvent(CarDone.new(self), (d/@speed))
       end
     end
     
