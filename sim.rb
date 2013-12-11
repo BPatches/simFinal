@@ -253,22 +253,26 @@ class Runner
     @engine.addEvent(PedSpawn.new(@engine.pedSpeed.getVal(@engine.rand,$PEDSPEED)),
                      @engine.pedArrive.nextArrival(@engine.time/60, @engine.rand, $PEDARRIVE)*60
                      )
+    @engine.addEvent(PedSpawn.new(@engine.pedSpeed.getVal(@engine.rand,$PEDSPEED)),
+                     @engine.pedArrive.nextArrival(@engine.time/60, @engine.rand, $PEDARRIVE)*60
+                     )
     @engine.addEvent(LogEvent.new(),0)
     @engine.addEvent(CarSpawn.new(@engine.carSpeed.getVal(@engine.rand,$CARSPEED),
-      @engine.rand.uniform(7,12),nil,false),
-                    @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60,
-                    )
+                                  @engine.rand.uniform(7,12),nil,false),
+                     @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60
+                     )
     @engine.addEvent(CarSpawn.new(@engine.carSpeed.getVal(@engine.rand,$CARSPEED),
-      @engine.rand.uniform(7,12),nil,true),
-                    @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60,
-                    )
-   
+                                  @engine.rand.uniform(7,12),nil,true),
+                     @engine.carArrive.nextArrival(@engine.time/60, @engine.rand, $CARARRIVE)*60
+                     )
+    
+  
   end
   def run
     logTime = 30
     while @engine.moreEvents do
       #if @engine.time > logTime then
-       
+      
       #puts "the time is #{@engine.time}"
       nextEvent = @engine.nextEvent
       #puts nextEvent.class

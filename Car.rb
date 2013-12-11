@@ -115,7 +115,9 @@ class Car
           puts 4
           @a = @maxA
           engine.reCar(self,((@maxSpeed.abs-@speed.abs).abs+0.001)/@a.to_f.abs)#dat time
-          engine.reCar(self,(@aheadCar.getLoc(engine.time)[0]
+          if (!@aheadCar == nil)
+            engine.reCar(self,(@aheadCar.getSpeed(engine.time)))
+          end
         else
           @carState = CarState::CONSTANT
           #puts " constant at #{@speed}"

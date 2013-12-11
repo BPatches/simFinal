@@ -108,7 +108,7 @@ def initialize(speed,acc,aheadCar,leftMoving)
     engine.addEvent(
                     CarSpawn.new(engine.carSpeed.getVal(engine.rand,$CARSPEED),
                     engine.rand.uniform(7,12),thisCar,@leftMoving),
-                    engine.carArrive.nextArrival(engine.time/60, engine.rand, $CARARRIVE)*60,
+                    engine.carArrive.nextArrival(engine.time/60, engine.rand, $CARARRIVE)*60
                     )
    
     engine.addEvent(CarArrive.new(thisCar),engine.time + 

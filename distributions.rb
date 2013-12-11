@@ -1,4 +1,4 @@
-require_relative 'LRandom'
+require './LRandom'
 class Lambda
   attr_reader :max
   def initialize(file)
