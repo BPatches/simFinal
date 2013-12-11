@@ -79,10 +79,10 @@ class XWalkDisplay < Gosu::Window
       drawX = x.to_f/@simWidth*@winWidth
       drawY = y.to_f/@simHeight*@winHeight+@edge
       if ped
-      	drawX -= image.width/2.0
+      	drawX -= image.width/2.0*0.3
         drawY -= (image.height)
       end
-      image.draw(drawX,drawY,1)
+      image.draw(drawX,drawY,1,0.3)
     end
   end
 end
